@@ -66,6 +66,12 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
+	cacheOpts, err := controllers.NewCacheOptions()
+	if err != nil {
+		setupLog.Error(err, "unable to set up cache options")
+		os.Exit(1)
+	}
+
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme: scheme,
 		Metrics: server.Options{
@@ -85,6 +91,7 @@ func main() {
 		// if you are doing or is intended to do any operation such as perform cleanups
 		// after the manager stops then its usage might be unsafe.
 		// LeaderElectionReleaseOnCancel: true,
+		Cache: cacheOpts,
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
